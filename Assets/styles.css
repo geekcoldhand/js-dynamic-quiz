@@ -1,0 +1,33 @@
+:root {
+  --color--text: #5f6797;
+  --color--score: #976ab4;
+  --color--button: #7d599e;
+  --color--shadow: #9b9797;
+}
+header {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  background-color: #c0c4dc1e;
+}
+
+header p,
+button {
+  margin-inline: 3%;
+  color: var(--color--score);
+}
+
+header button {
+  height: 50%;
+  background: transparent;
+  border-style: none;
+  cursor: pointer;
+}
+
+.quiz-box {
+  background-color: red;
+  margin-inline: auto;
+  margin-top: 15%;
+  width: 60%;
+  height: 35%;
+}
