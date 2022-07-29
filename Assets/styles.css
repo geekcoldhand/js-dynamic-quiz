@@ -12,7 +12,7 @@ header {
 }
 
 header p,
-button {
+header button {
   margin-inline: 3%;
   color: var(--color--score);
 }
@@ -30,4 +30,23 @@ header button {
   margin-top: 15%;
   width: 60%;
   height: 35%;
+  padding: 1rem;
+}
+
+.title {
+  font-size: 2rem;
+  padding-block: 1em;
+}
+/* This is the box that dynamically loads the javascript questions choices*/
+.question-box {
+  display: flex;
+  flex-direction: column;
+
+  width: 45%;
+  gap: 1.2rem;
+}
+/* This is the box that  */
+.answer {
+}
+#start {
 }
