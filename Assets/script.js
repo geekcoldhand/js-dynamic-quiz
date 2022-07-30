@@ -5,7 +5,7 @@ var title = document.querySelector(".title");
 var questionBox = document.querySelector(".question-box");
 var startBtn = document.getElementById("start");
 
-//create choice buttons
+//create choice buttons to use later
 var choice1 = document.createElement("button");
 var choice2 = document.createElement("button");
 var choice3 = document.createElement("button");
@@ -14,12 +14,20 @@ var choice4 = document.createElement("button");
 var timeStart = 75;
 function startClock() {
   //start the timer
-  setInterval(timer(), 1000);
-}
+  // setInterval(timer(), 1000);
 
-function timer() {
-  this.timeStart--;
-  time.textContent = "Time: " + timeStart;
+  // Sets interval in variable
+  var timerInterval = setInterval(function () {
+    timeStart--;
+    time.textContent = "Time: " + timeStart;
+
+    if (timeStart === 0) {
+      // Stops execution of action at set interval
+      clearInterval(timerInterval);
+      // Calls function to create and append image
+      gameOver();
+    }
+  }, 1000);
 }
 
 let quiz = {
@@ -48,10 +56,8 @@ let quiz = {
     let randIndex = Math.floor(Math.random() * 4);
 
     quiz.currPair = four[randIndex].split("?");
-
     quiz.currQuestion = quiz.currPair[0];
     quiz.corrAnswer = quiz.currPair[1];
-    console.log("answer in start", quiz.corrAnswer);
 
     title.textContent = quiz.currQuestion;
     //populate choices  ***
@@ -67,6 +73,7 @@ let quiz = {
     questionBox.appendChild(choice4);
   },
 
+  //this accepts the event as the paramater to access which button was calling the function
   checkAnswer(event) {
     // create a "correct" and "wrong!" box to show on click
     let rightWrong = document.createElement("h3");
@@ -81,9 +88,8 @@ let quiz = {
       rightWrong.textContent = "Wrong!";
       this.time -= 10;
     }
-
+    //render the right or wrong
     questionBox.appendChild(rightWrong);
-
     quiz.startQuestion();
     // check the time on the clock and if out of time call gameOver()
   },
@@ -95,7 +101,6 @@ let quiz = {
     while (currIndex) {
       randIndex = Math.floor(Math.random() * currIndex);
       currIndex--;
-
       //swapping the value assigned to both index positions
       [choices[currIndex], choices[randIndex]] = [
         choices[randIndex],
@@ -112,8 +117,6 @@ let quiz = {
       four[i] = this.questions[i];
     }
     quiz.questions.splice(0, 3);
-    console.log("four", four);
-
     //shuffle questions and return
     return quiz.shuffleQuestion(four);
   },
