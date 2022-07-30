@@ -66,10 +66,15 @@ let quiz = {
 
     title.textContent = quiz.currQuestion;
     //populate choices  ***
-    choice1.textContent = four[0].split("?")[1];
-    choice2.textContent = four[1].split("?")[1];
-    choice3.textContent = four[2].split("?")[1];
-    choice4.textContent = four[3].split("?")[1];
+    choice1.textContent = "1. " + four[0].split("?")[1];
+    choice2.textContent = "2. " + four[1].split("?")[1];
+    choice3.textContent = "3. " + four[2].split("?")[1];
+    choice4.textContent = "4. " + four[3].split("?")[1];
+
+    choice1.classList.add("questions");
+    choice2.classList.add("questions");
+    choice3.classList.add("questions");
+    choice4.classList.add("questions");
 
     //add children to the box
     questionBox.appendChild(choice1);
@@ -82,12 +87,19 @@ let quiz = {
   checkAnswer(event) {
     // create a "correct" and "wrong!" box to show on click
     let rightWrong = document.createElement("h3");
-    console.log("event", event.target.textContent);
-    console.log("answer in check", quiz.corrAnswer);
 
     // ** TODO: if the answer matches the guess then set text to correct
     // if  **TODO: the answer here is diff from guess subtract 10 from this.time
-    if ((event.target.textContent === quiz.corrAnswer) & (timeStart != 0)) {
+    console.log(
+      "is" +
+        event.target.textContent.split(".")[1].trim() +
+        "=" +
+        quiz.corrAnswer
+    );
+    if (
+      (event.target.textContent.split(".")[1].trim() === quiz.corrAnswer) &
+      (timeStart != 0)
+    ) {
       quiz.score += 10;
       rightWrong.textContent = "Correct!";
       setTimeout(function () {
@@ -95,13 +107,16 @@ let quiz = {
       }, 5000);
     } else {
       rightWrong.textContent = "Wrong!";
+      setTimeout(function () {
+        rightWrong.remove();
+      }, 2000);
       timeStart -= 10;
       quiz.score -= 10;
     }
     viewScore.textContent = "View Highscores " + quiz.score;
     //render the right or wrong
-    questionBox.appendChild(rightWrong);
-    //
+    rightWrong.classList.add("answer");
+    quizBox.appendChild(rightWrong);
     // check the time on the clock and if out of time call gameOver()
   },
 
@@ -132,10 +147,10 @@ let quiz = {
     return quiz.shuffleQuestion(four);
   },
   gameOver() {
+    title.textContent = "Game Over";
+    quiz.isGameOver = true;
     quiz.score += quiz.timeStart;
     viewScore.textContent = quiz.score;
-    console.log("Game is over!");
-    //this.logScore
   },
   logScore() {},
 };

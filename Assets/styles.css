@@ -25,28 +25,72 @@ header button {
 }
 
 .quiz-box {
-  background-color: red;
+  display: flex;
+  flex-direction: column;
   margin-inline: auto;
   margin-top: 15%;
   width: 60%;
-  height: 35%;
-  padding: 1rem;
+  height: fit-content;
+  padding: 3rem;
+  padding-bottom: 4rem;
+  text-align: center;
+  justify-content: center;
+}
+
+.quiz-box button {
+  background-color: #948d9ad9;
+  border: none;
+  color: var(--color--button);
+  cursor: pointer;
 }
 
 .title {
   font-size: 2rem;
   padding-block: 1em;
+  color: var(--color--text);
 }
 /* This is the box that dynamically loads the javascript questions choices*/
 .question-box {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  border-bottom: 0.1rem solid var(--color--text);
+}
 
-  width: 45%;
-  gap: 1.2rem;
+.question-box p {
+  text-align: center;
+  justify-content: center;
+}
+
+.question-box button {
+  border: none;
+  cursor: pointer;
+  background-color: #948d9ad9;
 }
 /* This is the box that  */
 .answer {
+  color: var(--color--shadow);
+  justify-content: left;
 }
+
+.questions {
+  margin: 1%;
+  width: inherit;
+  border-radius: 14%;
+  padding-block: 4%;
+  color: white;
+  background-color: var(--color--button);
+}
+
 #start {
+  padding: 0.5rem;
+  border-radius: 15%;
+  margin: 2%;
+  width: fit-content;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
 }
