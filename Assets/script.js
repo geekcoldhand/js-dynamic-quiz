@@ -14,25 +14,25 @@ var choice4 = document.createElement("button");
 var timeStart = 75;
 function startClock() {
   //start the timer
-  // setInterval(timer(), 1000);
+  if (!quiz.isGameOver) {
+    var timerInterval = setInterval(function () {
+      timeStart--;
+      time.textContent = "Time: " + timeStart;
 
-  // Sets interval in variable
-  var timerInterval = setInterval(function () {
-    timeStart--;
-    time.textContent = "Time: " + timeStart;
-
-    if (timeStart === 0) {
-      // Stops execution of action at set interval
-      clearInterval(timerInterval);
-      // Calls function to create and append image
-      gameOver();
-    }
-  }, 1000);
+      if (timeStart == 0) {
+        // Stops the game at the said var name
+        clearInterval(timerInterval);
+        // call function to set game over
+        quiz.gameOver();
+      }
+    }, 1000);
+  }
 }
 
 let quiz = {
   score: 0,
   length: 0,
+  isGameOver: false,
   questions: [
     "question1?an",
     "question2?ans",
@@ -46,6 +46,11 @@ let quiz = {
   currPair: "",
 
   startQuestion() {
+    if (this.isGameOver === true) {
+      quiz.gameOver();
+      return;
+    }
+
     startClock();
     //clear question box of all elements
     quizBox.lastElementChild.remove();
@@ -82,15 +87,21 @@ let quiz = {
 
     // ** TODO: if the answer matches the guess then set text to correct
     // if  **TODO: the answer here is diff from guess subtract 10 from this.time
-    if (event.target.textContent === quiz.corrAnswer) {
+    if ((event.target.textContent === quiz.corrAnswer) & (timeStart != 0)) {
+      quiz.score += 10;
       rightWrong.textContent = "Correct!";
+      setTimeout(function () {
+        quiz.startQuestion();
+      }, 5000);
     } else {
       rightWrong.textContent = "Wrong!";
-      this.time -= 10;
+      timeStart -= 10;
+      quiz.score -= 10;
     }
+    viewScore.textContent = "View Highscores " + quiz.score;
     //render the right or wrong
     questionBox.appendChild(rightWrong);
-    quiz.startQuestion();
+    //
     // check the time on the clock and if out of time call gameOver()
   },
 
@@ -120,7 +131,12 @@ let quiz = {
     //shuffle questions and return
     return quiz.shuffleQuestion(four);
   },
-  gameOver() {},
+  gameOver() {
+    quiz.score += quiz.timeStart;
+    viewScore.textContent = quiz.score;
+    console.log("Game is over!");
+    //this.logScore
+  },
   logScore() {},
 };
 
