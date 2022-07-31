@@ -55,7 +55,6 @@ header button {
   flex-direction: column;
   justify-content: center;
   text-align: center;
-  border-bottom: 0.1rem solid var(--color--text);
 }
 
 .question-box p {
@@ -67,6 +66,8 @@ header button {
   border: none;
   cursor: pointer;
   background-color: #948d9ad9;
+  width: fit-content;
+  padding: 1rem;
 }
 /* This is the box that  */
 .answer {
@@ -93,4 +94,11 @@ header button {
 .center {
   display: flex;
   justify-content: center;
+}
+
+.message {
+  display: flex;
+  justify-content: start;
+  border-top: 0.1rem solid var(--color--shadow);
+  color: var(--color--shadow);
 }

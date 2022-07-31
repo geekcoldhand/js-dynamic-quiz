@@ -4,6 +4,7 @@ var time = document.getElementById("timer");
 var title = document.querySelector(".title");
 var questionBox = document.querySelector(".question-box");
 var startBtn = document.getElementById("start");
+var messageEl = document.querySelector(".message");
 
 //create choice buttons to use later
 var choice1 = document.createElement("button");
@@ -11,21 +12,28 @@ var choice2 = document.createElement("button");
 var choice3 = document.createElement("button");
 var choice4 = document.createElement("button");
 
+var enterInit;
+
+var messageEl = document.createElement("div");
+//public timer variable
+var timerInterval = null;
 var timeStart = 75;
+
 function startClock() {
   //start the timer
-  if (!quiz.isGameOver) {
-    var timerInterval = setInterval(function () {
-      timeStart--;
-      time.textContent = "Time: " + timeStart;
+  timerInterval = setInterval(function () {
+    checkClock();
+  }, 1000);
+}
 
-      if (timeStart == 0) {
-        // Stops the game at the said var name
-        clearInterval(timerInterval);
-        // call function to set game over
-        quiz.gameOver();
-      }
-    }, 1000);
+function checkClock() {
+  if (timeStart > 0) {
+    // call function to set game over
+    console.log("check startClock function");
+    timeStart--;
+    time.textContent = "Time: " + timeStart;
+  } else {
+    quiz.gameOver();
   }
 }
 
@@ -43,15 +51,15 @@ let quiz = {
   ],
   currQuestion: "",
   corrAnswer: "",
-  currPair: "",
 
   startQuestion() {
-    if (this.isGameOver === true) {
+    if (timeStart < 0) {
       quiz.gameOver();
       return;
     }
 
-    startClock();
+    startClock(quiz.isGameOver);
+
     //clear question box of all elements
     quizBox.lastElementChild.remove();
     questionBox.lastElementChild.remove();
@@ -60,9 +68,9 @@ let quiz = {
     let four = quiz.fourQuestion();
     let randIndex = Math.floor(Math.random() * 4);
 
-    quiz.currPair = four[randIndex].split("?");
-    quiz.currQuestion = quiz.currPair[0];
-    quiz.corrAnswer = quiz.currPair[1];
+    let currPair = four[randIndex].split("?");
+    quiz.currQuestion = currPair[0];
+    quiz.corrAnswer = currPair[1];
 
     title.textContent = quiz.currQuestion;
     //populate choices  ***
@@ -85,26 +93,23 @@ let quiz = {
 
   //this accepts the event as the paramater to access which button was calling the function
   checkAnswer(event) {
+    if (timeStart < 0) {
+      console.log("here in checkAnswer");
+      quiz.gameOver();
+      return;
+    }
     // create a "correct" and "wrong!" box to show on click
     let rightWrong = document.createElement("h3");
 
-    // ** TODO: if the answer matches the guess then set text to correct
-    // if  **TODO: the answer here is diff from guess subtract 10 from this.time
-    console.log(
-      "is" +
-        event.target.textContent.split(".")[1].trim() +
-        "=" +
-        quiz.corrAnswer
-    );
-    if (
-      (event.target.textContent.split(".")[1].trim() === quiz.corrAnswer) &
-      (timeStart != 0)
-    ) {
-      quiz.score += 10;
+    //  if the answer matches the guess then set text to correct
+    // if the answer here is diff from guess subtract 10 from this.time
+
+    if (event.target.textContent.split(".")[1].trim() === quiz.corrAnswer) {
+      quiz.score += 20;
       rightWrong.textContent = "Correct!";
       setTimeout(function () {
         quiz.startQuestion();
-      }, 5000);
+      }, 2000);
     } else {
       rightWrong.textContent = "Wrong!";
       setTimeout(function () {
@@ -115,9 +120,10 @@ let quiz = {
     }
     viewScore.textContent = "View Highscores " + quiz.score;
     //render the right or wrong
-    rightWrong.classList.add("answer");
-    quizBox.appendChild(rightWrong);
-    // check the time on the clock and if out of time call gameOver()
+
+    rightWrong.classList.add("message");
+    messageEl.appendChild(rightWrong);
+    quizBox.appendChild(messageEl);
   },
 
   shuffleQuestion(choices) {
@@ -137,7 +143,6 @@ let quiz = {
   },
   fourQuestion() {
     let four = [];
-
     //populate four random values in our array from questions property
     for (var i = 0; i < 4; i++) {
       four[i] = this.questions[i];
@@ -147,12 +152,24 @@ let quiz = {
     return quiz.shuffleQuestion(four);
   },
   gameOver() {
-    title.textContent = "Game Over";
+    console.log("here in game over");
+    //clearInterval(timerInterval);
+    //stop the timer by updating quiz.isGameOver
     quiz.isGameOver = true;
-    quiz.score += quiz.timeStart;
-    viewScore.textContent = quiz.score;
+    //startClock(quiz.isGameOver);
+    title.textContent = "All done!";
+    //update the score and change the text on the screen
+    console.log("score is ", quiz.score);
+    quiz.score += timeStart;
+    viewScore.textContent = "View Hisgscore " + quiz.score;
+    //call the logScore() method
   },
-  logScore() {},
+  logScore() {
+    //clear the screen and add the initial box
+    // set the initial variable to log in local storage
+    // create a element to render the score element
+    console.log("log score here");
+  },
 };
 
 startBtn.addEventListener("click", quiz.startQuestion);
