@@ -12,17 +12,17 @@ var choice2 = document.createElement("button");
 var choice3 = document.createElement("button");
 var choice4 = document.createElement("button");
 var scoreInput = document.createElement("input");
+var scoreTitle = document.createElement("h1");
 var messageEl = document.createElement("div");
 var logNameBtn = document.createElement("button");
 var clearBtn = document.createElement("button");
 var scoreBox = document.createElement("div");
 var rightWrong = document.createElement("h3");
 var finalScore = document.createElement("div");
-
+var back = document.createElement("button");
 //public timer and question count variables
 var timerInterval = null;
 var timeStart = 75;
-
 //the clock is started and calls a check the time function checkClock()
 function startClock() {
   //start the timer
@@ -59,6 +59,7 @@ let quiz = {
     "Where do we access local storgae methods?window.localStorage...",
     "What data type is best for conditionals?boolean",
     "How can you create a element?document.createElement()",
+    "What key words control variable scope?var let const",
   ],
   currQuestion: "",
   corrAnswer: "",
@@ -93,8 +94,7 @@ let quiz = {
   //when the choice buttons are clicked it will call this checkAnswer()
   //this accepts the event as the paramater to access which button was calling the function
   checkAnswer(event) {
-    console.log("time", timeStart);
-    if (timeStart < 0) {
+    if (timeStart < 0 || countQuestion < 0) {
       quiz.gameOver();
       return;
     }
@@ -148,18 +148,22 @@ let quiz = {
     return quiz.shuffleQuestion(four);
   },
   gameOver() {
-    title.textContent = "All done!";
+    setTimeout(function () {
+      title.textContent = "All done!";
+    }, 500);
     //update the score and change the text on the screen
     quiz.score += timeStart;
     viewScore.textContent = "View Highscore " + quiz.score;
     //call the logScore() method'
-    title.textContent = "Highscore";
-    title.classList.remove("title");
+    scoreTitle.textContent = "Highscore";
+    title.remove();
+    quizBox.appendChild(scoreTitle);
     quiz.logScore();
   },
   logScore() {
+    stopClock();
     questionBox.remove();
-    title.classList.add("score-title");
+    scoreTitle.classList.add("score-title");
     scoreInput.setAttribute("type", "text");
     //clear the screen and add the initial box
     finalScore.textContent = quiz.score;
@@ -175,25 +179,20 @@ let quiz = {
     quizBox.appendChild(finalScore);
     quizBox.appendChild(scoreBox);
     //render the recent users from local storage in messEl
-    console.log(
-      "local highscore:" + JSON.parse(window.localStorage.getItem("Highscore"))
-    );
     messageEl.textContent = JSON.parse(
       window.localStorage.getItem("Highscore")
     );
     messageEl.style.visibility = "visible";
   },
-
   saveLocal() {
     //quiz.score to be saved under highscore local storage key
-    console.log("window storage", window.localStorage.getItem("Highscore"));
     let nameScore = scoreInput.value + ":" + quiz.score;
     window.localStorage.setItem("Highscore", JSON.stringify(nameScore));
+    scoreInput.textContent = "";
   },
   clearLocal() {
-    //remove the local highscores
-    console.log("cleared");
     window.localStorage.removeItem("Highscore");
+    scoreInput.textContent = "";
   },
 };
 var countQuestion = quiz.questions.length; // needs to be at the ends after the quiz in initialized to start count
@@ -207,3 +206,10 @@ choice4.addEventListener("click", quiz.checkAnswer);
 //log score buttons
 logNameBtn.addEventListener("click", quiz.saveLocal);
 clearBtn.addEventListener("click", quiz.clearLocal);
+viewScore.addEventListener("click", quiz.logScore);
+back.addEventListener("click", function () {
+  timeStart = 75;
+  scoreBox.remove();
+  scoreTitle.remove();
+  questionBox.appendChild();
+});
