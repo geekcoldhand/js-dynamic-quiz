@@ -22,6 +22,7 @@ var finalScore = document.createElement("div");
 //public timer and question count variables
 var timerInterval = null;
 var timeStart = 75;
+
 //the clock is started and calls a check the time function checkClock()
 function startClock() {
   //start the timer
@@ -33,7 +34,7 @@ function stopClock() {
   clearInterval(timerInterval);
 }
 function checkClock() {
-  if (timeStart > 0) {
+  if ((timeStart > 0) & (countQuestion > 0)) {
     //call function to set game over
     timeStart--;
     time.textContent = "Time: " + timeStart;
@@ -47,17 +48,22 @@ let quiz = {
   score: 0,
   questions: [
     "Commonly used data types DO NOT include:?alerts",
-    "Arrays in Javascript can be used to store ______.?Numbers&Arrays",
+    "Arrays in Javascript can be used to store ______.?Numbers Booleans Arrays",
     "String values must be enclosed within ______ when being assigned to variables.?quotes",
     "The condition in an 'if/else' statement is enclosed within ______.?(parentheses)",
     "How can you write the logic for if/else statments?{curly braces}",
     "What does this code execute: Class Classname{ constructor(){} };?creating a class",
     "What does this code execute: let quiz = {};?creating an object",
     "Class Classname extends OtherClass {};?creating a heritage class",
+    "What is the limit to the number of javascript files?You can link multiple",
+    "Where do we access local storgae methods?window.localStorage...",
+    "What data type is best for conditionals?boolean",
+    "How can you create a element?document.createElement()",
   ],
   currQuestion: "",
   corrAnswer: "",
   startQuestion() {
+    countQuestion--;
     instructEl.remove();
     startBtn.remove();
     //create a random index out of 4 for the correct answer
@@ -145,11 +151,10 @@ let quiz = {
     title.textContent = "All done!";
     //update the score and change the text on the screen
     quiz.score += timeStart;
-    viewScore.textContent = "View Hisgscore " + quiz.score;
+    viewScore.textContent = "View Highscore " + quiz.score;
     //call the logScore() method'
     title.textContent = "Highscore";
     title.classList.remove("title");
-
     quiz.logScore();
   },
   logScore() {
@@ -170,16 +175,28 @@ let quiz = {
     quizBox.appendChild(finalScore);
     quizBox.appendChild(scoreBox);
     //render the recent users from local storage in messEl
+    console.log(
+      "local highscore:" + JSON.parse(window.localStorage.getItem("Highscore"))
+    );
+    messageEl.textContent = JSON.parse(
+      window.localStorage.getItem("Highscore")
+    );
+    messageEl.style.visibility = "visible";
   },
 
   saveLocal() {
     //quiz.score to be saved under highscore local storage key
+    console.log("window storage", window.localStorage.getItem("Highscore"));
+    let nameScore = scoreInput.value + ":" + quiz.score;
+    window.localStorage.setItem("Highscore", JSON.stringify(nameScore));
   },
   clearLocal() {
     //remove the local highscores
+    console.log("cleared");
+    window.localStorage.removeItem("Highscore");
   },
 };
-
+var countQuestion = quiz.questions.length; // needs to be at the ends after the quiz in initialized to start count
 startBtn.addEventListener("click", quiz.startQuestion);
 startBtn.addEventListener("click", startClock);
 //button choices to use later
@@ -187,6 +204,6 @@ choice1.addEventListener("click", quiz.checkAnswer);
 choice2.addEventListener("click", quiz.checkAnswer);
 choice3.addEventListener("click", quiz.checkAnswer);
 choice4.addEventListener("click", quiz.checkAnswer);
-//log buttons
+//log score buttons
 logNameBtn.addEventListener("click", quiz.saveLocal);
 clearBtn.addEventListener("click", quiz.clearLocal);
