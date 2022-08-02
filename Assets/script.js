@@ -5,6 +5,7 @@ var title = document.querySelector(".title");
 var questionBox = document.querySelector(".question-box");
 var startBtn = document.getElementById("start");
 var messageEl = document.querySelector(".message");
+var instructEl = document.getElementById("instructions");
 //create dynamic elements to use later
 var choice1 = document.createElement("button");
 var choice2 = document.createElement("button");
@@ -14,10 +15,14 @@ var scoreInput = document.createElement("input");
 var messageEl = document.createElement("div");
 var logNameBtn = document.createElement("button");
 var clearBtn = document.createElement("button");
-//public timer variable
+var scoreBox = document.createElement("div");
+var rightWrong = document.createElement("h3");
+var finalScore = document.createElement("div");
+
+//public timer and question count variables
 var timerInterval = null;
 var timeStart = 75;
-// the clock is started and calls a check the time function checkClock()
+//the clock is started and calls a check the time function checkClock()
 function startClock() {
   //start the timer
   timerInterval = setInterval(function () {
@@ -25,12 +30,11 @@ function startClock() {
   }, 1000);
 }
 function stopClock() {
-  console.log("timer interval var" + timerInterval);
   clearInterval(timerInterval);
 }
 function checkClock() {
   if (timeStart > 0) {
-    // call function to set game over
+    //call function to set game over
     timeStart--;
     time.textContent = "Time: " + timeStart;
   } else {
@@ -41,7 +45,6 @@ function checkClock() {
 //create a quiz object
 let quiz = {
   score: 0,
-  isGameOver: false,
   questions: [
     "Commonly used data types DO NOT include:?alerts",
     "Arrays in Javascript can be used to store ______.?Numbers&Arrays",
@@ -55,10 +58,9 @@ let quiz = {
   currQuestion: "",
   corrAnswer: "",
   startQuestion() {
-    //clear question box of all elementsß
-    quizBox.lastElementChild.remove();
-    questionBox.lastElementChild.remove();
-    // create a random index out of 4 for the correct answer
+    instructEl.remove();
+    startBtn.remove();
+    //create a random index out of 4 for the correct answer
     let four = quiz.fourQuestion();
     let randIndex = Math.floor(Math.random() * 4);
     let currPair = four[randIndex].split("?");
@@ -90,19 +92,20 @@ let quiz = {
       quiz.gameOver();
       return;
     }
-    // create a "correct" and "wrong!" box to show on click
-    let rightWrong = document.createElement("h3");
+    //create a "correct" and "wrong!" box to show on click
     // if the answer here is diff from guess subtract 10 from this.time
     if (event.target.textContent.split(".")[1].trim() === quiz.corrAnswer) {
-      quiz.score += 20;
+      quiz.score += 15;
       rightWrong.textContent = "Correct!";
       setTimeout(function () {
+        messageEl.style.visibility = "hidden";
         quiz.startQuestion();
       }, 2000);
     } else {
       rightWrong.textContent = "Wrong!";
       setTimeout(function () {
-        rightWrong.remove();
+        messageEl.style.visibility = "hidden";
+        quiz.startQuestion();
       }, 1000);
       timeStart -= 10;
       quiz.score -= 10;
@@ -110,10 +113,11 @@ let quiz = {
     viewScore.textContent = "View Highscores " + quiz.score;
     //render the right or wrong
     rightWrong.classList.add("message");
+    messageEl.style.visibility = "visible";
     messageEl.appendChild(rightWrong);
     quizBox.appendChild(messageEl);
   },
-  // helper method used by the fourQuestions() method before returning
+  //helper method used by the fourQuestions() method before returning
   shuffleQuestion(choices) {
     let currIndex = choices.length;
     let randIndex = 0;
@@ -134,36 +138,55 @@ let quiz = {
     for (var i = 0; i < 4; i++) {
       four[i] = this.questions[i];
     }
-    console.log("the quiz.question: ", quiz.questions);
-    quiz.question = quiz.shuffleQuestion(quiz.questions);
-    //quiz.questions.splice(0, 3);
-    //shuffle questions and return
+    quiz.question = quiz.shuffleQuestion(quiz.questions); //shuffle questions and return
     return quiz.shuffleQuestion(four);
   },
   gameOver() {
-    //stop the timer by updating quiz.isGameOver
-    quiz.isGameOver = true;
-    //startClock(quiz.isGameOver);
     title.textContent = "All done!";
     //update the score and change the text on the screen
-    // stopClock();
     quiz.score += timeStart;
     viewScore.textContent = "View Hisgscore " + quiz.score;
-    console.log("gameover score here");
-    //call the logScore() method
+    //call the logScore() method'
+    title.textContent = "Highscore";
+    title.classList.remove("title");
+
     quiz.logScore();
   },
   logScore() {
+    questionBox.remove();
+    title.classList.add("score-title");
     scoreInput.setAttribute("type", "text");
     //clear the screen and add the initial box
-    // set the initial variable to log in local storage
-    // create a element to render the score element
+    finalScore.textContent = quiz.score;
+    finalScore.classList.add("jumbo-text");
+    logNameBtn.textContent = "Log Initials";
+    clearBtn.textContent = "Clear";
+    clearBtn.classList.add("score-button");
+    logNameBtn.classList.add("score-button");
+    scoreBox.appendChild(scoreInput);
+    scoreBox.appendChild(logNameBtn);
+    scoreBox.appendChild(clearBtn);
+    scoreBox.classList.add("score-box");
+    quizBox.appendChild(finalScore);
+    quizBox.appendChild(scoreBox);
+    //render the recent users from local storage in messEl
+  },
+
+  saveLocal() {
+    //quiz.score to be saved under highscore local storage key
+  },
+  clearLocal() {
+    //remove the local highscores
   },
 };
+
 startBtn.addEventListener("click", quiz.startQuestion);
 startBtn.addEventListener("click", startClock);
-// button choices to use later
+//button choices to use later
 choice1.addEventListener("click", quiz.checkAnswer);
 choice2.addEventListener("click", quiz.checkAnswer);
 choice3.addEventListener("click", quiz.checkAnswer);
 choice4.addEventListener("click", quiz.checkAnswer);
+//log buttons
+logNameBtn.addEventListener("click", quiz.saveLocal);
+clearBtn.addEventListener("click", quiz.clearLocal);

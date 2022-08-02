@@ -102,3 +102,26 @@ header button {
   border-top: 0.1rem solid var(--color--shadow);
   color: var(--color--shadow);
 }
+
+.score-box {
+  justify-content: center;
+  text-align: center;
+}
+.score-title {
+  font-size: 3rem;
+  color: var(--color--text);
+}
+.score-button {
+  border: none;
+  cursor: pointer;
+  background-color: #948d9ad9;
+  width: fit-content;
+  border-radius: 14%;
+  padding: 2%;
+  margin-inline: 3%;
+}
+
+.jumbo-text {
+  font-size: 3rem;
+  color: var(--color--text);
+}
